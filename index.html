@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语音转换原型</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="sidebar">
+      <div class="side-head">
+        <button class="back-btn" aria-label="返回">←</button>
+        <h1 class="side-title" id="sideTitle"></h1>
+      </div>
+      <div class="side-tabs">
+        <button class="tab-btn" id="tabRead"></button>
+        <button class="tab-btn active" id="tabConvert"></button>
+      </div>
+    </aside>
+
+    <section class="saved-panel">
+      <header class="saved-header">
+        <span id="savedHeaderTitle"></span>
+        <div id="savedHeaderAction"></div>
+      </header>
+      <div class="saved-list" id="savedList"></div>
+    </section>
+
+    <main class="main-panel">
+      <section id="readPanel" class="panel" hidden></section>
+      <section id="inputPanel" class="panel"></section>
+      <section id="resultPanel" class="panel result" hidden></section>
+    </main>
+  </div>
+
+  <div id="overlayRoot"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
