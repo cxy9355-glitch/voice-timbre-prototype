@@ -264,6 +264,22 @@ body {
   padding: 18px 14px 16px;
 }
 
+.convert-input-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.convert-input-top {
+  flex: 1;
+}
+
+.convert-input-bottom {
+  margin-top: auto;
+  padding-bottom: 2px;
+}
+
 .panel.read-panel-shell {
   padding: 0;
   overflow: hidden;
@@ -635,47 +651,23 @@ input[type="range"] {
   background: rgba(255, 255, 255, 0.64);
   border-radius: 12px;
   padding: 10px;
-  margin-top: 4px;
+  margin-top: 0;
+  min-height: 102px;
 }
 
 .record-entry-row {
   display: flex;
   align-items: stretch;
   gap: 10px;
+  min-height: 82px;
 }
 
 .record-display {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.record-action-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.record-primary-btn,
-.record-secondary-btn {
-  flex: 1;
-  min-height: 40px;
-  border: 0;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(45, 58, 73, 0.08);
-}
-
-.record-secondary-btn {
-  background: rgba(255, 255, 255, 0.92);
-  color: #2d3a49;
-}
-
-.record-primary-btn {
-  background: linear-gradient(180deg, #fff0b6 0%, #f4dd34 100%);
-  color: #342a00;
+  height: 82px;
+  min-height: 82px;
 }
 
 .record-more-btn {
@@ -756,7 +748,8 @@ input[type="range"] {
 
 .record-btn {
   width: 100%;
-  min-height: 74px;
+  height: 82px;
+  min-height: 82px;
   border: 0;
   border-radius: 14px;
   background: linear-gradient(180deg, #fff7dd 0%, #f3e2a0 100%);
@@ -768,9 +761,14 @@ input[type="range"] {
 }
 
 .record-btn.recording {
-  min-height: 118px;
-  padding: 8px 10px;
+  height: 82px;
+  min-height: 82px;
+  padding: 6px 10px;
   background: linear-gradient(180deg, #ffd6d6 0%, #f6a9a9 100%);
+}
+
+.record-btn.recording.cancel-ready {
+  background: linear-gradient(180deg, #ffd0d0 0%, #f58a8a 100%);
 }
 
 .record-btn.generating {
@@ -789,17 +787,17 @@ input[type="range"] {
 .recording-inner {
   display: flex;
   height: 100%;
-  min-height: 86px;
+  min-height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   color: #121212;
 }
 
 .recording-icon {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #ff6d6d;
   position: relative;
@@ -809,19 +807,32 @@ input[type="range"] {
 .recording-icon::before {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: 6px;
   border-radius: 50%;
   background: #fff4f4;
 }
 
-.recording-text {
-  font-size: 12px;
+.recording-gesture {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  color: rgba(24, 24, 24, 0.9);
+  font-size: 11px;
   font-weight: 800;
   line-height: 1;
 }
 
+.recording-gesture.cancel {
+  background: rgba(255, 255, 255, 0.78);
+  color: #c53d3d;
+}
+
 .recording-wave {
-  height: 16px;
+  height: 12px;
   display: flex;
   align-items: end;
   gap: 3px;

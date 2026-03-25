@@ -11,8 +11,6 @@
   btnRegen: "修改音色并重新生成",
   btnReRecord: "重新录入",
   btnSave: "满意并保存",
-  btnRecordCancel: "取消",
-  btnRecordStop: "停止",
   readTitle: "生成参数",
   readTextLabel: "配音内容",
   readGenerate: "AI朗读",
@@ -45,6 +43,9 @@ const state = {
   playingSavedId: null,
   playingResult: null,
   isRecording: false,
+  recordWillCancel: false,
+  recordPointerId: null,
+  recordStartY: 0,
   isGenerating: false,
   selectedReadTimbre: "蛋小黄",
   generatedReadTimbre: "蛋小黄",
@@ -149,6 +150,9 @@ function resetConvertToInput() {
   state.playingResult = null;
   state.convertStage = "input";
   state.isRecording = false;
+  state.recordWillCancel = false;
+  state.recordPointerId = null;
+  state.recordStartY = 0;
   state.isGenerating = false;
   state.inputMoreOpen = false;
   state.uploadedAudioName = "";
@@ -213,7 +217,9 @@ function renderConvertInputPanel() {
       ? `
         <span class="recording-inner">
           <span class="recording-icon"></span>
-          <span class="recording-text">录音中...</span>
+          <span class="recording-gesture ${state.recordWillCancel ? "cancel" : ""}">
+            ${state.recordWillCancel ? "松开取消" : "松手发送，上滑取消"}
+          </span>
           <span class="recording-wave" aria-hidden="true">
             <span></span><span></span><span></span><span></span><span></span><span></span>
           </span>
@@ -223,12 +229,8 @@ function renderConvertInputPanel() {
 
   const recordControls = state.isRecording
     ? `
-      <div class="record-display record-btn recording">
+      <div class="record-display record-btn recording ${state.recordWillCancel ? "cancel-ready" : ""}">
         ${recordContent}
-      </div>
-      <div class="record-action-row">
-        <button id="cancelRecordBtn" class="record-secondary-btn">${i18n.btnRecordCancel}</button>
-        <button id="stopRecordBtn" class="record-primary-btn">${i18n.btnRecordStop}</button>
       </div>
     `
     : `
@@ -241,47 +243,52 @@ function renderConvertInputPanel() {
     `;
 
   inputPanel.innerHTML = `
-    <h2>${i18n.pageTitle}</h2>
-    ${renderTimbreHead()}
-    ${renderTimbreGrid({
-      items: buildVisibleTimbres(convertTimbres, state.surfacedConvertTimbre),
-      selected: state.selectedConvertTimbre,
-      current: state.generatedConvertTimbre,
-      actionTarget: "convert",
-      showCurrentTag: false,
-      disabled: convertControlsLocked
-    })}
-    <div class="param-row">
-      <div class="param-label">
-        <p class="label">情绪</p>
-        <span class="section-help">?</span>
-      </div>
-      <select class="select read-select" id="convertEmotionSelect">${emotions.map((item) => `<option ${item === state.convertEmotion ? "selected" : ""}>${item}</option>`).join("")}</select>
-    </div>
-    <div class="param-row">
-      <div class="param-label">
-        <p class="label">语速</p>
-        <span class="section-help">?</span>
-      </div>
-      <select class="select read-select" id="convertSpeedSelect">${speeds.map((item) => `<option ${item === state.convertSpeed ? "selected" : ""}>${item}</option>`).join("")}</select>
-    </div>
-    <div class="section-head">
-      <p class="label">音量</p>
-    </div>
-    <div class="slider-row">
-      <input id="convertVolumeRange" type="range" min="0" max="100" value="${state.convertVolume}">
-      <div class="value-box">${state.convertVolume}</div>
-    </div>
-    <p class="label">${i18n.labelInput}</p>
-    <div class="record-card">
-      ${recordControls}
-      ${state.inputMoreOpen ? `
-        <div class="record-more-menu">
-          <label class="record-more-item" for="uploadAudioInput">上传音频</label>
-          <input id="uploadAudioInput" type="file" accept="audio/*" hidden>
+    <div class="convert-input-shell">
+      <div class="convert-input-top">
+        <h2>${i18n.pageTitle}</h2>
+        ${renderTimbreHead()}
+        ${renderTimbreGrid({
+          items: buildVisibleTimbres(convertTimbres, state.surfacedConvertTimbre),
+          selected: state.selectedConvertTimbre,
+          current: state.generatedConvertTimbre,
+          actionTarget: "convert",
+          showCurrentTag: false,
+          disabled: convertControlsLocked
+        })}
+        <div class="param-row">
+          <div class="param-label">
+            <p class="label">情绪</p>
+            <span class="section-help">?</span>
+          </div>
+          <select class="select read-select" id="convertEmotionSelect">${emotions.map((item) => `<option ${item === state.convertEmotion ? "selected" : ""}>${item}</option>`).join("")}</select>
         </div>
-      ` : ""}
-      ${state.uploadedAudioName ? `<div class="upload-name">已选择：${escapeHtml(state.uploadedAudioName)}</div>` : ""}
+        <div class="param-row">
+          <div class="param-label">
+            <p class="label">语速</p>
+            <span class="section-help">?</span>
+          </div>
+          <select class="select read-select" id="convertSpeedSelect">${speeds.map((item) => `<option ${item === state.convertSpeed ? "selected" : ""}>${item}</option>`).join("")}</select>
+        </div>
+        <div class="section-head">
+          <p class="label">音量</p>
+        </div>
+        <div class="slider-row">
+          <input id="convertVolumeRange" type="range" min="0" max="100" value="${state.convertVolume}">
+          <div class="value-box">${state.convertVolume}</div>
+        </div>
+      </div>
+      <div class="convert-input-bottom">
+        <div class="record-card">
+          ${recordControls}
+          ${state.inputMoreOpen ? `
+            <div class="record-more-menu">
+              <label class="record-more-item" for="uploadAudioInput">上传音频</label>
+              <input id="uploadAudioInput" type="file" accept="audio/*" hidden>
+            </div>
+          ` : ""}
+          ${state.uploadedAudioName ? `<div class="upload-name">已选择：${escapeHtml(state.uploadedAudioName)}</div>` : ""}
+        </div>
+      </div>
     </div>
   `;
 }
@@ -396,7 +403,7 @@ function renderHelpModal() {
         "音色服务已升级，可直接体验更高质量、更有表现力的新版音色。"
       ]
     : [
-        "录音中可选择“停止”进入生成，也可选择“取消”直接回到待输入状态。",
+        "按住录音后，松手直接发送；上滑后松手则取消本次录音。",
         "生成中会锁定音色切换、上传入口和更多音色，避免误触。",
         "结果页修改音色后，“修改音色并重新生成”才会解锁，避免误触重复生成。",
         "点击“更多”可打开完整音色列表，确认后会带回当前面板。"
@@ -513,6 +520,9 @@ function finishConvertGenerating(nextStage = "result") {
   window.clearTimeout(state.generateTimer);
   state.generateTimer = window.setTimeout(() => {
     state.isGenerating = false;
+    state.recordWillCancel = false;
+    state.recordPointerId = null;
+    state.recordStartY = 0;
     state.generatedConvertTimbre = state.selectedConvertTimbre;
     state.generatedConvertEmotion = state.convertEmotion;
     state.generatedConvertSpeed = state.convertSpeed;
@@ -520,6 +530,42 @@ function finishConvertGenerating(nextStage = "result") {
     state.convertStage = nextStage;
     renderMain();
   }, 1500);
+}
+
+function beginRecordGesture(pointerId, clientY) {
+  if (state.isGenerating || state.isRecording) return;
+  state.inputMoreOpen = false;
+  state.uploadedAudioName = "";
+  state.isRecording = true;
+  state.recordWillCancel = false;
+  state.recordPointerId = pointerId;
+  state.recordStartY = clientY;
+  renderMain();
+}
+
+function updateRecordGesture(clientY) {
+  if (!state.isRecording) return;
+  const nextWillCancel = clientY < state.recordStartY - 56;
+  if (nextWillCancel !== state.recordWillCancel) {
+    state.recordWillCancel = nextWillCancel;
+    renderMain();
+  }
+}
+
+function finishRecordGesture(cancelled = false) {
+  if (!state.isRecording) return;
+  const shouldCancel = cancelled || state.recordWillCancel;
+  state.isRecording = false;
+  state.recordWillCancel = false;
+  state.recordPointerId = null;
+  state.recordStartY = 0;
+  if (shouldCancel) {
+    renderMain();
+    return;
+  }
+  state.isGenerating = true;
+  renderMain();
+  finishConvertGenerating("result");
 }
 
 function finishReadGenerating() {
@@ -640,28 +686,6 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  if (button?.id === "recordBtn" && !state.isGenerating && !state.isRecording) {
-    state.inputMoreOpen = false;
-    state.uploadedAudioName = "";
-    state.isRecording = true;
-    renderMain();
-    return;
-  }
-
-  if (button?.id === "cancelRecordBtn" && state.isRecording) {
-    state.isRecording = false;
-    renderMain();
-    return;
-  }
-
-  if (button?.id === "stopRecordBtn" && state.isRecording) {
-    state.isRecording = false;
-    state.isGenerating = true;
-    renderMain();
-    finishConvertGenerating("result");
-    return;
-  }
-
   if (button?.id === "regenBtn") {
     if (!canRegenerateConvert()) {
       return;
@@ -735,6 +759,31 @@ document.addEventListener("change", (event) => {
   if (target.id === "readVolumeRange") state.readVolume = Number(target.value);
 
   renderMain();
+});
+
+document.addEventListener("pointerdown", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  const button = target.closest("button");
+  if (button?.id !== "recordBtn") return;
+  if (state.isGenerating || state.isRecording) return;
+  event.preventDefault();
+  beginRecordGesture(event.pointerId, event.clientY);
+});
+
+document.addEventListener("pointermove", (event) => {
+  if (!state.isRecording || state.recordPointerId !== event.pointerId) return;
+  updateRecordGesture(event.clientY);
+});
+
+document.addEventListener("pointerup", (event) => {
+  if (!state.isRecording || state.recordPointerId !== event.pointerId) return;
+  finishRecordGesture(false);
+});
+
+document.addEventListener("pointercancel", (event) => {
+  if (!state.isRecording || state.recordPointerId !== event.pointerId) return;
+  finishRecordGesture(true);
 });
 
 document.addEventListener("input", (event) => {
