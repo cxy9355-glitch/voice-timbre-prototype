@@ -334,9 +334,9 @@ function renderConvertResultPanel() {
           <input id="convertVolumeRange" type="range" min="0" max="100" value="${state.convertVolume}" ${state.isGenerating ? "disabled" : ""}>
           <div class="value-box">${state.convertVolume}</div>
         </div>
-        <button id="regenBtn" ${canRegenerate ? "" : "disabled"}>${state.isGenerating ? "生成中..." : i18n.btnRegen}</button>
       </div>
       <div class="result-actions">
+        <button id="regenBtn" ${canRegenerate ? "" : "disabled"}>${state.isGenerating ? "生成中..." : i18n.btnRegen}</button>
         <button id="reRecordBtn" ${state.isGenerating ? "disabled" : ""}>${i18n.btnReRecord}</button>
         <button id="saveBtn" ${state.isGenerating ? "disabled" : ""}>${i18n.btnSave}</button>
       </div>

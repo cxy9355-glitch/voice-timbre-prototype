@@ -910,15 +910,15 @@ input[type="range"] {
 
 #regenBtn {
   width: 100%;
-  min-height: 44px;
-  margin-top: 10px;
+  min-height: 50px;
   border: 0;
-  border-radius: 18px;
+  border-radius: 24px;
   background: #fff;
   color: #342a00;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 900;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(45, 58, 73, 0.08);
   transition: opacity 0.16s ease, background-color 0.16s ease, color 0.16s ease;
 }
 
@@ -936,8 +936,8 @@ input[type="range"] {
 .result-actions {
   flex-shrink: 0;
   margin-top: auto;
-  display: flex;
-  justify-content: stretch;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   width: 100%;
   margin-left: 0;
@@ -945,6 +945,10 @@ input[type="range"] {
   padding-right: 0;
   padding-bottom: 6px;
   background: linear-gradient(180deg, rgba(230, 239, 246, 0) 0%, rgba(230, 239, 246, 0.92) 32%);
+}
+
+#regenBtn {
+  grid-column: 1 / -1;
 }
 
 #reRecordBtn, #saveBtn {
