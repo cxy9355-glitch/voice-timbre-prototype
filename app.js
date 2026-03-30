@@ -33,11 +33,7 @@ const state = {
   convertStage: "input",
   selectedConvertTimbre: "凶狠坏蛋",
   generatedConvertTimbre: "凶狠坏蛋",
-  convertEmotion: "高兴",
-  convertSpeed: "正常",
   convertVolume: 76,
-  generatedConvertEmotion: "高兴",
-  generatedConvertSpeed: "正常",
   generatedConvertVolume: 76,
   surfacedConvertTimbre: "",
   playingSavedId: null,
@@ -170,8 +166,6 @@ function getSurfacedTimbre(baseItems, timbre) {
 function canRegenerateConvert() {
   return (
     state.selectedConvertTimbre !== state.generatedConvertTimbre ||
-    state.convertEmotion !== state.generatedConvertEmotion ||
-    state.convertSpeed !== state.generatedConvertSpeed ||
     state.convertVolume !== state.generatedConvertVolume
   ) && !state.isGenerating;
 }
@@ -255,20 +249,6 @@ function renderConvertInputPanel() {
           showCurrentTag: false,
           disabled: convertControlsLocked
         })}
-        <div class="param-row">
-          <div class="param-label">
-            <p class="label">情绪</p>
-            <span class="section-help">?</span>
-          </div>
-          <select class="select read-select" id="convertEmotionSelect">${emotions.map((item) => `<option ${item === state.convertEmotion ? "selected" : ""}>${item}</option>`).join("")}</select>
-        </div>
-        <div class="param-row">
-          <div class="param-label">
-            <p class="label">语速</p>
-            <span class="section-help">?</span>
-          </div>
-          <select class="select read-select" id="convertSpeedSelect">${speeds.map((item) => `<option ${item === state.convertSpeed ? "selected" : ""}>${item}</option>`).join("")}</select>
-        </div>
         <div class="section-head">
           <p class="label">音量</p>
         </div>
@@ -313,20 +293,6 @@ function renderConvertResultPanel() {
           showCurrentTag: true,
           disabled: state.isGenerating
         })}
-        <div class="param-row result-param-row">
-          <div class="param-label">
-            <p class="label">情绪</p>
-            <span class="section-help">?</span>
-          </div>
-          <select class="select read-select" id="convertEmotionSelect" ${state.isGenerating ? "disabled" : ""}>${emotions.map((item) => `<option ${item === state.convertEmotion ? "selected" : ""}>${item}</option>`).join("")}</select>
-        </div>
-        <div class="param-row result-param-row">
-          <div class="param-label">
-            <p class="label">语速</p>
-            <span class="section-help">?</span>
-          </div>
-          <select class="select read-select" id="convertSpeedSelect" ${state.isGenerating ? "disabled" : ""}>${speeds.map((item) => `<option ${item === state.convertSpeed ? "selected" : ""}>${item}</option>`).join("")}</select>
-        </div>
         <div class="section-head result-section-head">
           <p class="label">音量</p>
         </div>
@@ -524,8 +490,6 @@ function finishConvertGenerating(nextStage = "result") {
     state.recordPointerId = null;
     state.recordStartY = 0;
     state.generatedConvertTimbre = state.selectedConvertTimbre;
-    state.generatedConvertEmotion = state.convertEmotion;
-    state.generatedConvertSpeed = state.convertSpeed;
     state.generatedConvertVolume = state.convertVolume;
     state.convertStage = nextStage;
     renderMain();
@@ -751,8 +715,6 @@ document.addEventListener("change", (event) => {
     return;
   }
 
-  if (target.id === "convertEmotionSelect") state.convertEmotion = target.value;
-  if (target.id === "convertSpeedSelect") state.convertSpeed = target.value;
   if (target.id === "convertVolumeRange") state.convertVolume = Number(target.value);
   if (target.id === "readEmotionSelect") state.readEmotion = target.value;
   if (target.id === "readSpeedSelect") state.readSpeed = target.value;
